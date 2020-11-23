@@ -1,0 +1,4 @@
+Gene	Organism
+HSPA1A	Human
+Hspa1a	Rat
+Hspa1a	Mouse
