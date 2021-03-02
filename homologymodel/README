@@ -1,1 +1,3 @@
-
+New files:
+1. homology_model_swissmodel.pdb: using swissmodel: homology model of P11142|HSP7C_HUMAN Heat shock cognate 71 kDa protein OS=Homo sapiens using 4po2AC as template without substrate
+2. homologymodel_4po2AC_hsc70_NRLLLTG.pdb using pymol: homology model( homology_model_swissmodel.pdb) and substate from 4po2 chain C using pymol
