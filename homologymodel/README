@@ -3,3 +3,4 @@ New files in model01 directory:
 2. homologymodel_4po2AC_hsc70_NRLLLTG.pdb using pymol: homology model( homology_model_swissmodel.pdb) and substate from 4po2 chain C using pymol
 
 RMSD when 4po2 and homology_model_swissmodel.pdb aligned: 0.053
+
