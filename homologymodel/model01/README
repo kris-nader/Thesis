@@ -1,0 +1,6 @@
+Results of homology modeling and structure assessment via swissmodel
+
+10/2460 Bad Angles
+1/1824 Bad bonds --> will these be repaired with foldX?
+
+Ramachandran plot looks good
