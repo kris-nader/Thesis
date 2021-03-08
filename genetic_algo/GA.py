@@ -94,6 +94,8 @@ def selection(peptides,interaction_energy,n):
 ## this one will split in a difffernt way
 ### pep1: 'R-AT-PFV'  lets say CuttingPoint=1  child1: 'R-NP-PFV'  
 ### pep2: 'S-NP-ELY'           CuttingPoint2=3 child2: 'S-AT-ELY'
+
+## problem: what if the cutt1> cutt 2?? --- LOOK AT THIS
 def crossover(peptides):
     children = []
     #data.peptideseq
