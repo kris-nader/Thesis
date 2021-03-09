@@ -1,1 +1,5 @@
+Problems:
+Should the fitness of each round be changed?
+for now 
+round 1: interaction energy of all alanine substrate was taken as a threshold. Should it always be the max/ changing at each round(which i think yes)/more stringent?
 
