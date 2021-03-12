@@ -9,6 +9,10 @@ Hill Climbing trial ~~ i dont see the stochasticity here so??
 aa=["A","R","N","D","C","E","Q","G","H",
     "I","L","K","M","F","P","S","T","W","Y","V"]
 
+dic_aa={"ALA":'A',"ARG":'R',"ASN":'N',"ASP":'D',"CYS":'C',"GLU":'E',"GLN":'Q',
+        "GLY":'G',"HIS":'H',"ILE":'I',"LEU":'L',"LYS":'K',"MET":'M',"PHE":'F',
+        "PRO":'P',"SER":'S',"THR":'T',"TRP":"W","TYR":'Y',"VAL":'V'}
+
 ### START W HSP70
 ## Starts the same create the same individual list
 ## Starts with the alanine seq
@@ -134,13 +138,13 @@ def generate_FOLDX_mutate_runfiles(data,position):
         temp_file_q="FOLDX_mutate_pos"+str(position)+"_pdb_"+str(data.Pdb[i][16:len(data.Pdb[i])-4])+"_hsp70.q"
         with open(temp_file_q,'w',newline='\n') as qfile:
             text_list_q = ["#!/bin/bash\n",
-                           "#$ -N FOLDX_4po2AC_pos"+str(position)+"_hc\n",
-                           "#$ -cwd\n",
-                           "#$ -V\n" ,
-                           "#$ -q all.q\n" ,
-                           "#$ -l h_vmem=2G\n",
-                           "\n",
-                           "/switchlab/group/tools/2021_FoldX5_LoopX/foldx -f /home/krinad/thesisfiles/hsp70/buildmodel_AlanineMutagenesis/hill_climb/pos"+str(position)+"/config_mutate_pos"+str(position)+"_pdb_"+str(data.Pdb[i][16:len(data.Pdb[i])-4])+"_hsp70.cfg"+"\n"]
+                            "#$ -N FOLDX_4po2AC_pos"+str(position)+"_hc\n",
+                            "#$ -cwd\n",
+                            "#$ -V\n" ,
+                            "#$ -q all.q\n" ,
+                            "#$ -l h_vmem=2G\n",
+                            "\n",
+                            "/switchlab/group/tools/2021_FoldX5_LoopX/foldx -f /home/krinad/thesisfiles/hsp70/buildmodel_AlanineMutagenesis/hill_climb/pos"+str(position)+"/config_mutate_pos"+str(position)+"_pdb_"+str(data.Pdb[i][16:len(data.Pdb[i])-4])+"_hsp70.cfg"+"\n"]
             qfile.writelines(text_list_q)
             qfile.close()
     with open("commandfile1.txt","w",newline="\n") as commandfile:
@@ -206,6 +210,25 @@ def generate_FOLDX_analyse_runfiles_mod(data,position):
             for j in range(1,21):
                 pdbfile.write("/home/krinad/thesisfiles/hsp70/buildmodel_AlanineMutagenesis/hill_climb/pos"+str(position)+"/"+i[2:len(i)-4]+"_"+str(j)+".pdb;\n")
     pdbfile.close()
+
+def find_substate_read_file(location_file):
+    pdb_data=pd.read_csv(location_file, sep="\s+", header=None, skiprows=1778)
+    pdb_data.columns=["ATOM", "Position", "atom_type","aa","chain","substrate_position","one","two","three","four","five"]
+    substrate=[]
+    count=1
+    for i in range(0,len(pdb_data.aa)):
+        if(count!=int(pdb_data.substrate_position[i])):
+            substrate.append(dic_aa[pdb_data.aa[i]])
+            count=count+1
+    return("".join(substrate))
+    
+def find_substate_name(file,length_of_substrate):
+    substrate=['A']*length_of_substrate
+    temp=file[:-4].split("_")[2:]
+    for i in range(0,len(temp)):
+        substrate[i]=aa[int(temp[i])-1]
+    return("".join(substrate))
+        
     
 
 #################
@@ -254,7 +277,21 @@ data5=readSummary("C:\\Users\\user\\Desktop\\hill_climbing\\pos5\\Summary_file_p
 find_next=find_best_binders(data5)
 
 ## ROUND 6 -- position 6
-create_indlist("C", 6)
-generate_FOLDX_mutate_runfiles(find_next, 6)
+#create_indlist("C", 6)
+#generate_FOLDX_mutate_runfiles(find_next, 6)
+#generate_FOLDX_analyse_runfiles_mod(find_next,6)
 
+data6=readSummary("C:\\Users\\user\\Desktop\\hill_climbing\\pos6\\Summary_file_pos6.txt")
+find_next=find_best_binders(data6)
+
+## ROUND 7 -- position 7
+create_indlist("C", 7)
+generate_FOLDX_mutate_runfiles(find_next, 7)
+
+
+
+#print(find_substate_name("./4po2AC_Repair_18_3_1_12_20.pdb",6))
+
+
+#find_sub=find_substate("C:\\Users\\user\\Desktop\\hill_climbing\\pos3\\4po2AC_Repair_19_1.pdb")
 
