@@ -1,5 +1,2 @@
-Problems:
-Should the fitness of each round be changed?
-for now 
-round 1: interaction energy of all alanine substrate was taken as a threshold. Should it always be the max/ changing at each round(which i think yes)/more stringent?
-
+two3456seven: sequence starts at 2 and ends at 7(not done bc took too long will restart later). Using max(data.Interaction_Energy) as threshold
+four3256seven: sequence starts at 4 to 2 and starts again from 5 to 7. Using data.Interaction_Energy.mean() as threshold
