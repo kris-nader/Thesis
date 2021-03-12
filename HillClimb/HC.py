@@ -52,17 +52,26 @@ def find_best_binders(data):
             keep_next_round.append(file[i])
     temp_df=pd.DataFrame({'Pdb': keep_next_round, 'Index_made': index })
     temp_df=temp_df.sort_values(by='Index_made')
-    
     temp_df = temp_df.reset_index()
     temp_df=temp_df[['Pdb','Index_made']]
-
     return(temp_df)
 
-def create_indlist2(X,mutate_position,best_binders):
-    with open('individual_list.txt','w',newline='\n') as myfile:
-            for i in aa:
-                myfile.write("A"+X+str(mutate_position)+i+";\n")
-    myfile.close()
+def find_top_X(data,X):
+    data=data.sort_values(by='Interaction_Energy')
+    data = data.reset_index()
+    data=data[['Pdb','Interaction_Energy']]
+    return(data.iloc[0:int(X),])
+    
+            
+    
+    
+    
+
+# def create_indlist2(X,mutate_position,best_binders):
+#     with open('individual_list.txt','w',newline='\n') as myfile:
+#             for i in aa:
+#                 myfile.write("A"+X+str(mutate_position)+i+";\n")
+#     myfile.close()
     
 def generate_FOLDX_mutate_runfiles_pos2(originalPDB,position):
     
@@ -229,6 +238,11 @@ def find_substate_name(file,length_of_substrate):
         substrate[i]=aa[int(temp[i])-1]
     return("".join(substrate))
         
+def return_top_X_peptides(top_X,length_of_substrate):
+    peptides=[]
+    for i in range(0,len(top_X)):
+        peptides.append(find_substate_name(top_X.Pdb[i],6))
+    return (peptides)    
     
 
 #################
@@ -251,6 +265,8 @@ def find_substate_name(file,length_of_substrate):
 # tail -n1 -q *.fxout >> Summary_file_pos2.txt
 data=readSummary("C:\\Users\\user\\Desktop\\hill_climbing\\pos2\\Summary_file_pos2.txt")
 find_next=find_best_binders(data)
+top_10_2=find_top_X(data,10)
+peptides_data2=return_top_X_peptides(top_10_2,6)
 
 ## ROUND 3 -- position 3
 #create_indlist2("C", 3, data) # this is if you want to put them all in the same job
@@ -260,6 +276,8 @@ find_next=find_best_binders(data)
 
 data3=readSummary("C:\\Users\\user\\Desktop\\hill_climbing\\pos3\\Summary_file_pos3.txt")
 find_next=find_best_binders(data3)
+top_10_3=find_top_X(data3,10)
+peptides_data3=return_top_X_peptides(top_10_3,6)
 
 ## ROUND 4 -- position 4
 #create_indlist("C", 4)
@@ -268,6 +286,8 @@ find_next=find_best_binders(data3)
 
 data4=readSummary("C:\\Users\\user\\Desktop\\hill_climbing\\pos4\\Summary_file_pos4.txt")
 find_next=find_best_binders(data4)
+top_10_4=find_top_X(data4,10)
+peptides_data4=return_top_X_peptides(top_10_4,6)
 
 ## ROUND 5 -- position 5
 #create_indlist("C", 5)
@@ -275,6 +295,9 @@ find_next=find_best_binders(data4)
 #generate_FOLDX_analyse_runfiles_mod(find_next,5)
 data5=readSummary("C:\\Users\\user\\Desktop\\hill_climbing\\pos5\\Summary_file_pos5.txt")
 find_next=find_best_binders(data5)
+top_10_5=find_top_X(data5,10)
+peptides_data5=return_top_X_peptides(top_10_5,6)
+
 
 ## ROUND 6 -- position 6
 #create_indlist("C", 6)
@@ -284,13 +307,25 @@ find_next=find_best_binders(data5)
 data6=readSummary("C:\\Users\\user\\Desktop\\hill_climbing\\pos6\\Summary_file_pos6.txt")
 find_next=find_best_binders(data6)
 
+
+data6.loc[data6['Interaction_Energy'] == min(data6.Interaction_Energy)]
+#print(find_substate_name("./4po2AC_Repair_19_4_1_13.pdb ",6))
+top_10_6=find_top_X(data6,10)
+peptides_data6=return_top_X_peptides(top_10_6,6)
+
+
+
+peptides_6rounds=pd.DataFrame(list(zip(peptides_data2, peptides_data3,
+                                       peptides_data4,peptides_data5,
+                                       peptides_data6)),
+                              columns =['pos2', 'po3','pos4','pos5','pos6'])
+
+
+
 ## ROUND 7 -- position 7
-create_indlist("C", 7)
-generate_FOLDX_mutate_runfiles(find_next, 7)
+#create_indlist("C", 7)
+#generate_FOLDX_mutate_runfiles(find_next, 7)
 
-
-
-#print(find_substate_name("./4po2AC_Repair_18_3_1_12_20.pdb",6))
 
 
 #find_sub=find_substate("C:\\Users\\user\\Desktop\\hill_climbing\\pos3\\4po2AC_Repair_19_1.pdb")
