@@ -246,7 +246,7 @@ def generate_FOLDX_mutate_runfiles(originalPDB,nround):
         qfile.close()
    
 ###################
-#generate 100 random individuals
+#generate 100 random individuals most prob you should start w like 1000
 #randomlist=create_seq(100,6)
 
 crossoverProbability=0.8
@@ -312,5 +312,11 @@ print(mutated_children)
 #         print(data.Interaction_Energy[i])
 #         count=count+1
 
+with open("peptides_best1.txt",'w',newline='\n') as best_peptide_file:
+    for i in range(0,len(data.peptideseq)):
+        if (data.Interaction_Energy[i]<maxFitness):
+            best_peptide_file.write(" "+data.peptideseq[i]+"\n")
+best_peptide_file.close()
+#print(find_substate_name_432567("./4po2AC_Repair_19_4_2_5_7_20.pdb","432567",7))
 
     
