@@ -1,0 +1,469 @@
+---
+title: "best_worst"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo =TRUE,fig.width = 5,fig.height = 3)
+library(ggplot2)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+```{r cars}
+hsp70_avg=read.table(file="C:\\Users\\user\\Desktop\\check_structures\\hsp70\\results\\Average_4po2_Repair.fxout",header=T)
+hsc70_avg=read.table(file="C:\\Users\\user\\Desktop\\check_structures\\hsc70\\results\\Average_hsc70_Repair.fxout",header=T)
+dnak_avg=read.table(file="C:\\Users\\user\\Desktop\\check_structures\\dnak\\results\\Average_1dkz_Repair.fxout",header=T)
+dnak_w1_avg=read.table(file="C:\\Users\\user\\Desktop\\check_structures\\dnak_w1\\results\\Average_4EZW1_Repair.fxout",header=T)
+
+par(mfrow=c(3,6))
+plot(hsp70_avg$Backbone_Hbond)
+plot(hsp70_avg$Sidechain_Hbond)
+plot(hsp70_avg$Van_der_Waals)
+plot(hsp70_avg$Electrostatics)
+plot(hsp70_avg$Solvation_Polar)
+plot(hsp70_avg$Solvation_Hydrophobic)
+plot(hsp70_avg$Van_der_Waals_clashes)
+plot(hsp70_avg$entropy_sidechain)
+plot(hsp70_avg$entropy_mainchain)
+#plot(hsp70_avg$sloop_entropy)
+#plot(hsp70_avg$mloop_entropy)
+#plot(hsp70_avg$cis_bond)
+plot(hsp70_avg$torsional_clash)
+plot(hsp70_avg$backbone_clash)
+plot(hsp70_avg$helix_dipole)
+#plot(hsp70_avg$water_bridge)
+#plot(hsp70_avg$disulfide)
+plot(hsp70_avg$electrostatic_kon)
+#plot(hsp70_avg$partial_covalent_bonds)
+#plot(hsp70_avg$energy_Ionisation)
+#plot(hsp70_avg$Entropy_Complex)
+
+dataset_hs=rbind(hsp70_avg,hsc70_avg)
+dataset_hs$Peptides=c("Best 20gen","Best 20gen","Best 20gen","Worst 1gen","Worst 1gen","Worst 1gen","Alanine","NR","Best 20gen","Best 20gen","Best 20gen","Worst 1gen","Worst 1gen","Worst 1gen","Alanine","NR")
+dataset_dna=rbind(dnak_avg,dnak_w1_avg)
+dataset_dna$Peptides=c("Best 20gen","Best 20gen","Best 20gen","Worst 1gen","Worst 1gen","Worst 1gen","Alanine","NR","Best 20gen","Best 20gen","Best 20gen","Worst 1gen","Worst 1gen","Worst 1gen","Alanine","NR")
+```
+```{r}
+Protein_peptide=c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)
+p<-ggplot(dataset_hs, aes(x = Protein_peptide , y =Van_der_Waals,group = Peptides)) +
+  geom_point(aes(shape=Peptides))
+
+  # coord_cartesian(xlim=c(1,16.1), ylim=c(-9,0), clip="off") +
+  # annotate("segment", x = 1, xend = 8.5, y = -9.7, yend = -9.7) +
+  # geom_text(aes(4.5,-9.5,label = "Hsp70", vjust = 1.5))+
+  # annotate("segment", x = 9, xend = 16.1, y = -9.7, yend = -9.7)+
+  # geom_text(aes(13,-9.5,label = "Hsc70", vjust = 1.5))+
+  # theme(axis.text.x=element_blank(),axis.title.x = element_text(vjust=-1.5))+
+  # geom_rect(aes(xmin = 0.3, xmax = 8.5, ymin = -Inf, ymax = Inf),
+  #           alpha = 1/5,fill="light blue")+
+  # ggtitle("Van der Waals Energy of Hsp70 and Hsc70 peptides")
+
+
+  # Shade area under y_lim
+```
+
+
+```{r}
+ggplot(dataset_dna, aes(x = Protein_peptide , y =Van_der_Waals,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-9.5,0), clip="off") +
+  geom_text(aes(4.5,-10,label = "DnaK", vjust = 1.9))+
+  geom_text(aes(13,-10,label = "DnaK-W1", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks.x = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Van der Waals Energy of DnaK and DnaK-W1 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(x = "Interacting Protein-Peptides",y="Van der Waals Energy (kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+
+#ggsave("vdw_dnak_dnakw1.png")
+```
+```{r}
+ggplot(dataset_dna, aes(x = Protein_peptide , y =Van_der_Waals,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-9.5,0), clip="off") +
+  geom_text(aes(4.5,-10,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-10,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks.x = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Van der Waals Energy of Hsp70 and Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Van der Waals Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+
+#ggsave("vdw_hsp_hsc.png")
+```
+```{r}
+ggplot(dataset_hs, aes(x = Protein_peptide , y =Electrostatics,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-2.5,3), clip="off") +
+  geom_text(aes(4.5,-2.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-2.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x =element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Electrostatics Energy of Hsp70 and Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Electrostatics Energy (kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+#ggsave("ee_dnak_dnakw1.png")
+
+```
+```{r}
+ggplot(dataset_dna, aes(x = Protein_peptide , y =Electrostatics,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-2.5,3), clip="off") +
+  geom_text(aes(4.5,-2.75,label = "DnaK", vjust = 1.9))+
+  geom_text(aes(13,-2.75,label = "DnaK-W1", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Electrostatics Energy of DnaK and DnaK-W1 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Electrostatics Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+#ggsave("ee_hsp_hsc.png")
+
+```
+
+```{r}
+ggplot(dataset_dna, aes(x = Protein_peptide , y =Backbone_Hbond,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-2.5,3), clip="off") +
+  geom_text(aes(4.5,-2.75,label = "DnaK", vjust = 1.9))+
+  geom_text(aes(13,-2.75,label = "DnaK-W1", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Backbone Hbond Energy of DnaK and DnaK-W1 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Backbone Hbond Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+
+
+```
+```{r}
+ggplot(dataset_hs, aes(x = Protein_peptide , y =Backbone_Hbond,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-2.5,3), clip="off") +
+  geom_text(aes(4.5,-2.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-2.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Backbone Hbond Energy of Hsp70 and Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Backbone Hbond Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+
+
+```
+
+```{r}
+ggplot(dataset_hs, aes(x = Protein_peptide , y =Van_der_Waals_clashes,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-2.5,3), clip="off") +
+  geom_text(aes(4.5,-2.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-2.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks.x = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Van der Waals Clashes of Hsp70 and Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Van der Waals Clashes Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+```
+
+```{r}
+ggplot(dataset_dna, aes(x = Protein_peptide , y =Van_der_Waals_clashes,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-2.5,3), clip="off") +
+  geom_text(aes(4.5,-2.75,label = "DnaK", vjust = 1.9))+
+  geom_text(aes(13,-2.75,label = "DnaK-W1", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks.x = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Backbone Hbond Energy of DnaK and DnaK-W1 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Backbone Hbond Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+
+```
+```{r}
+ggplot(dataset_hs, aes(x = Protein_peptide , y =Solvation_Hydrophobic,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-14,0), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Hydrophobic Solvation Energy of Hsp70 and Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Hydrophobic Solvation Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+
+```
+```{r}
+ggplot(dataset_dna, aes(x = Protein_peptide , y =Solvation_Hydrophobic,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-14,0), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "DnaK", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "DnaK-W1", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Hydrophobic Solvation Energy of DnaK and DnaK-W1 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="Hydrophobic Solvation Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+```
+hsp70
+```{r}
+hsp70_ind_avg=read.table(file="C:\\Users\\user\\Desktop\\check_structures\\hsp70\\one\\Average_4po2_Repair_1.fxout",header=T)
+```
+
+```{r}
+par(mfrow=c(1,5))
+plot(hsp70_ind_avg$Backbone_Hbond)
+plot(hsp70_ind_avg$Sidechain_Hbond)
+plot(hsp70_ind_avg$Van_der_Waals)
+plot(hsp70_ind_avg$Electrostatics)
+plot(hsp70_ind_avg$Solvation_Polar)
+
+plot(hsp70_ind_avg$Solvation_Hydrophobic)
+plot(hsp70_ind_avg$Van_der_Waals_clashes)
+plot(hsp70_ind_avg$entropy_sidechain)
+plot(hsp70_ind_avg$entropy_mainchain)
+plot(hsp70_ind_avg$sloop_entropy)
+
+
+plot(hsp70_ind_avg$mloop_entropy)
+#
+ plot(hsp70_ind_avg$cis_bond)
+ plot(hsp70_ind_avg$torsional_clash)
+ plot(hsp70_ind_avg$backbone_clash)
+ plot(hsp70_ind_avg$helix_dipole)
+plot(hsp70_ind_avg$water_bridge)
+plot(hsp70_ind_avg$disulfide)
+plot(hsp70_ind_avg$electrostatic_kon)
+plot(hsp70_ind_avg$partial_covalent_bonds)
+plot(hsp70_ind_avg$energy_Ionisation)
+plot(hsp70_ind_avg$Entropy_Complex)
+```
+```{r}
+
+```
+```{r}
+knitr::opts_chunk$set(echo =TRUE,fig.width = 5,fig.height = 2)
+```
+
+
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =Backbone_Hbond,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$Backbone_Hbond),max(dataset_hs$Backbone_Hbond)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Backbone H-Bond(kcal/mol)-Hsp70 & Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Backbone Hbond", paste("(kcal/mol)"))))
+
+```
+
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =Sidechain_Hbond,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$Sidechain_Hbond),max(dataset_hs$Sidechain_Hbond)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Sidechain H-bond(kcal/mol)-Hsp70 &Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Sidechain Hbond", paste("(kcal/mol)"))))
+```
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =Van_der_Waals,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$Van_der_Waals),max(dataset_hs$Van_der_Waals)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Van der Waals (kcal/mol)-Hsp70 &Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Van der Waals ", paste("(kcal/mol)"))))
+```
+
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =Electrostatics,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$Electrostatics),max(dataset_hs$Electrostatics)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Electrostatics (kcal/mol)-Hsp70 &Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Electrostatics ", paste("(kcal/mol)"))))
+```
+
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =Solvation_Polar,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$Solvation_Polar),max(dataset_hs$Solvation_Polar)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Solvation Polar (kcal/mol)-Hsp70 & Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Solvation Polar ", paste("(kcal/mol)"))))
+```
+
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =Solvation_Hydrophobic,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$Solvation_Hydrophobic),max(dataset_hs$Solvation_Hydrophobic)), clip="off") +
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Solvation Hydrophobic (kcal/mol)-Hsp70 & Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Solvation Hydrophobic ", paste("(kcal/mol)"))))
+```
+
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =Van_der_Waals_clashes,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$Van_der_Waals_clashes),max(dataset_hs$Van_der_Waals_clashes)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Van der Waals clashes (kcal/mol)-Hsp70 & Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Van der Waals clashes", paste("(kcal/mol)"))))
+```
+
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =entropy_sidechain,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$entropy_sidechain),max(dataset_hs$entropy_sidechain)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Entropy sidechain (kcal/mol)-Hsp70 & Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Entropy sidechain", paste("(kcal/mol)"))))
+```
+
+```{r}
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =entropy_mainchain,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$entropy_mainchain),max(dataset_hs$entropy_mainchain)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Entropy Mainchain (kcal/mol)-Hsp70 & Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Entropy Mainchain", paste("(kcal/mol)"))))
+```
+
+```{r}
+ggplot(dataset_hs, aes(x = Protein_peptide , y =sloop_entropy,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(-14,0), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("sloop_entropy Energy of Hsp70 and Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="sloop_entropy Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+```
+
+```{r}
+
+ggplot(dataset_hs, aes(x = Protein_peptide , y =mloop_entropy,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$mloop_entropy),max(dataset_hs$mloop_entropy)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("mloop_entropy Energy of Hsp70 and Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.5))+
+  labs(y="mloop_entropy Energy(kcal)")+theme( axis.title.x = element_text(vjust = -1.4)
+  )
+```
+
+```{r}
+
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =torsional_clash,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$torsional_clash),max(dataset_hs$torsional_clash)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Torsional Clash (kcal/mol)-Hsp70 & Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Torsional Clash", paste("(kcal/mol)"))))
+```
+
+```{r}
+
+p=ggplot(dataset_hs, aes(x = Protein_peptide , y =backbone_clash,group = Peptides)) +
+  geom_point(aes(shape=Peptides))+
+  coord_cartesian(xlim=c(1,16.1), ylim=c(min(dataset_hs$backbone_clash),max(dataset_hs$backbone_clash)), clip="off") +
+  geom_text(aes(4.5,-14.75,label = "Hsp70", vjust = 1.9))+
+  geom_text(aes(13,-14.75,label = "Hsc70", vjust = 1.9))+
+  theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.ticks = element_blank())+
+  annotate("rect", xmin = 0.2, xmax = 8.5, ymin = -Inf, ymax = Inf,
+           alpha = .1,fill = "blue")+
+  ggtitle("Backone Clash (kcal/mol)-Hsp70 & Hsc70 peptides")+theme(plot.title = element_text(hjust = 0.3))+
+  labs(x="Hsp70                   Hsc70")+theme( axis.title.x = element_text(vjust = -1.4))
+ # )
+
+p + ylab(expression(atop("Backone Clash", paste("(kcal/mol)"))))
+
+
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
